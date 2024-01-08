@@ -121,7 +121,7 @@ function createMarkup(arr) {
   if (arr.length === 0) {
     iziToast.error({
       message:
-        'Sorry, there are no images matching <br> your search query. Please try again!',
+        'Sorry, there are no images matching  your search query. Please try again!',
       position: 'topRight',
     });
   }
