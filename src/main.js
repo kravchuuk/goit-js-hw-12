@@ -20,6 +20,12 @@ axios.defaults.baseURL = 'https://pixabay.com/api/';
 let currentPage = 1;
 const per_page = 40;
 let lightbox = new SimpleLightbox('.gallery a');
+let galleryItemHeight;
+
+function toggleLoader(visible) {
+  refs.loadDiv.innerHTML = visible ? '<span class="loader"></span>' : '';
+  refs.loadBtn.classList.toggle('hidden', !visible);
+}
 
 async function getGaleryItems(page = currentPage) {
   try {
@@ -30,6 +36,10 @@ async function getGaleryItems(page = currentPage) {
     return response.data;
   } catch (error) {
     console.error(error);
+    iziToast.error({
+      message: 'Oops! Something went wrong. Please try again later.',
+      position: 'topRight',
+    });
   }
 }
 
@@ -38,16 +48,17 @@ refs.loadBtn.addEventListener('click', onClick);
 
 async function onSearch(e) {
   e.preventDefault();
-  currentPage = 1;
-
   if (refs.input.value.trim() === '') {
-    return iziToast.error({
+    iziToast.error({
       message: 'Sorry, the field must be filled in!',
       position: 'topRight',
     });
-  } else {
-    refs.gallery.innerHTML = '<span class="loader"></span>';
+    return;
   }
+
+  currentPage = 1;
+  toggleLoader(true);
+
   try {
     const data = await getGaleryItems();
     refs.gallery.innerHTML = createMarkup(data.hits);
@@ -58,18 +69,18 @@ async function onSearch(e) {
         position: 'topRight',
       });
     }
-    refs.loadBtn.hidden = per_page >= data.totalHits;
+    refs.loadBtn.classList.toggle('hidden', per_page >= data.totalHits);
   } catch (err) {
     console.error(err);
+  } finally {
+    toggleLoader(false);
   }
 }
 
 async function onClick(e) {
   e.preventDefault();
   currentPage += 1;
-
-  refs.loadDiv.innerHTML = '<span class="loader"></span>';
-  refs.loadBtn.hidden = true;
+  toggleLoader(true);
 
   try {
     const data = await getGaleryItems(currentPage);
@@ -82,7 +93,7 @@ async function onClick(e) {
     });
 
     if (data.totalHits / per_page <= currentPage) {
-      refs.loadBtn.hidden = true;
+      refs.loadBtn.classList.toggle('hidden', true);
       refs.loadDiv.innerHTML = '';
       iziToast.info({
         message: "We're sorry, but you've reached the end of search results.",
@@ -90,17 +101,19 @@ async function onClick(e) {
       });
     } else if (data.totalHits / per_page >= currentPage) {
       refs.loadDiv.innerHTML = '';
-      refs.loadBtn.hidden = false;
+      refs.loadBtn.classList.toggle('hidden', false);
     }
 
     const galleryItem = document.querySelector('.gallery-item');
-    let rect = galleryItem.getBoundingClientRect();
+    galleryItemHeight = galleryItem.getBoundingClientRect().height;
     scrollBy({
-      top: rect.height * 3,
+      top: galleryItemHeight * 3,
       behavior: 'smooth',
     });
   } catch (err) {
     console.error(err);
+  } finally {
+    toggleLoader(false);
   }
 }
 
