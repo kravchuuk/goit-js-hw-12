@@ -4,9 +4,7 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Homework</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <title>goit-js-hw-12</title>
     <link
       href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500&display=swap"
       rel="stylesheet"
@@ -14,16 +12,17 @@
     <link rel="stylesheet" href="./css/styles.css" />
   </head>
   <body>
-    <form class="js-form">
-      <input id="input" type="text" placeholder="Search images..." />
-      <button type="submit">Search</button>
+    <form class="search-form">
+      <input class="search-input" type="text" placeholder="Search images..." />
+      <button class="submit-btn" type="submit">Search</button>
     </form>
+    <div class="frame-loader"><div class="loader"></div></div>
 
-    <ul class="gallery"></ul>
+    <div class="wraper">
+      <ul class="gallery"></ul>
+    </div>
 
-    <div class="js-loader"></div>
-
-    <button class="js-load" hidden>Load more</button>
+    <button class="load-more" type="button">Load more</button>
 
     <script type="module" src="./main.js"></script>
   </body>
